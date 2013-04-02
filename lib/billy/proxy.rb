@@ -58,6 +58,9 @@ module Billy
       @cache.load_dir
     end
 
+    # puts find_stub(options[:method] || 'GET', url)
+    # def stubs_len; puts @stubs.length;
+
     protected
 
     def find_stub(method, url)
@@ -75,7 +78,7 @@ module Billy
           p.handler = self
           p.cache = @cache
         end
-
+        # puts "proxy started"
         Billy.log(:info, "Proxy listening on #{url}")
       end
     end
