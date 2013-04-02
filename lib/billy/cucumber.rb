@@ -6,8 +6,22 @@ require 'billy'
 $billy_proxy = Billy::Proxy.new
 $billy_proxy.start
 
+module Billy
+  def self.proxy
+    $billy_proxy
+  end
+
+  module CucumberHelper
+    def proxy
+      Billy.proxy
+    end
+  end
+end
+
+World(Billy::CucumberHelper)
+
 After('@billy') do
-  Billy.proxy.reset
+  proxy.reset
 end
 
 ['capybara/poltergeist', 'capybara/webkit', 'selenium/webdriver'].each do |driver|
@@ -20,6 +34,8 @@ end
 if defined?(Capybara::Poltergeist)
   Capybara.register_driver :poltergeist_billy do |app|
     options = {
+      debug: true, # Uncomment to log to STDERROR
+      js_errors: false,
       phantomjs_options: [
         '--ignore-ssl-errors=yes',
         "--proxy=#{Billy.proxy.host}:#{Billy.proxy.port}"
