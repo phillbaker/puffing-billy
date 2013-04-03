@@ -23,11 +23,13 @@ module Billy
     end
 
     def host
-      'localhost'
+      # 'localhost'
+      # '127.0.0.1' 
+      '0.0.0.0'
     end
 
     def port
-      Socket.unpack_sockaddr_in(EM.get_sockname(@signature)).first
+      80808 # Socket.unpack_sockaddr_in(EM.get_sockname(@signature)).first
     end
 
     def call(method, url, headers, body)
@@ -46,6 +48,7 @@ module Billy
     end
 
     def reset
+      Billy.log(:info, "Reset stubs")
       @stubs = []
     end
 
@@ -70,15 +73,17 @@ module Billy
     def main_loop
       EM.run do
         EM.error_handler do |e|
+          puts 'error!'
           puts e.class.name, e
           puts e.backtrace.join("\n")
         end
 
-        @signature = EM.start_server('127.0.0.1', 0, ProxyConnection) do |p|
+        # host, 0
+        @signature = EM.start_server(host, 80808, ProxyConnection) do |p|
           p.handler = self
           p.cache = @cache
         end
-        # puts "proxy started"
+
         Billy.log(:info, "Proxy listening on #{url}")
       end
     end
