@@ -10,15 +10,12 @@ module Billy
     attr_accessor :cache
 
     def post_init
-      Billy.log(:info, "POST INIT")
-      puts 'post init'
       @parser = Http::Parser.new(self)
       @header_data = ""
     end
 
     def receive_data(data)
       @header_data << data if @headers.nil?
-      puts "receive"
       begin
         @parser << data
       rescue HTTP::Parser::Error
@@ -47,7 +44,6 @@ module Billy
     end
 
     def on_message_complete
-      puts 'message complete'
       if @parser.http_method == 'CONNECT'
         restart_with_ssl(@parser.request_url)
       else
@@ -73,7 +69,6 @@ module Billy
     end
 
     def handle_request
-      puts 'handle_request'
       if handler && handler.respond_to?(:call)
         result = handler.call(@parser.http_method, @url, @headers, @body)
       end

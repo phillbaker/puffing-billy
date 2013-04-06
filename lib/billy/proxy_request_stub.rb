@@ -48,12 +48,10 @@ module Billy
       else
         body = res[:body]
       end
-      # p [code, headers, body]
       [code, headers, body]
     end
 
     def matches?(method, url)
-      # p url
       if method == @method
         if @url.is_a?(Regexp)
           url.match(@url)
